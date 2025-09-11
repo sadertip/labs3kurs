@@ -1,7 +1,7 @@
 ﻿﻿#include <iostream>
 using namespace std;
 int main() {
-    cout << "Total cost"  << "\n";
+    cout << "asdasdads"  << "\n";
 
     return 0;
 }
