@@ -1,11 +1,11 @@
-п»ї#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include <string>
-#include "Matrices.h"
+#include "Matrices_template.h"
 
-
-matrix::~matrix()
+template<typename T>
+matrix<T>::~matrix()
 {
     delete[] data;
     data = nullptr;
@@ -13,7 +13,8 @@ matrix::~matrix()
     cols = 0;
 }
 
-matrix::matrix(size_t m, size_t n, double value)
+template<typename T>
+matrix<T>::matrix(size_t m, size_t n, T value)
     :matrix(m, n)
 {
     for (int i = 0; i < m * n; ++i)
@@ -22,7 +23,8 @@ matrix::matrix(size_t m, size_t n, double value)
     }
 }
 
-matrix::matrix(const matrix& M)
+template<typename T>
+matrix<T>::matrix(const matrix& M)
     :matrix(M.row_size(), M.col_size())
 {
     auto m = M.row_size();
@@ -33,7 +35,8 @@ matrix::matrix(const matrix& M)
     }
 }
 
-matrix::matrix(size_t m, size_t n, std::initializer_list<double> initer)
+template<typename T>
+matrix<T>::matrix(size_t m, size_t n, std::initializer_list<T> initer)
     :matrix(m, n)
 {
     _ASSERT(m * n <= initer.size());
@@ -45,26 +48,30 @@ matrix::matrix(size_t m, size_t n, std::initializer_list<double> initer)
     }
 }
 
-matrix& matrix::operator=(const matrix& M)
+template<typename T>
+matrix<T>& matrix<T>::operator=(const matrix& M)
 {
     auto new_matrix = matrix(M);
     this->swap(new_matrix);
     return *this;
 }
 
-const double& matrix::operator[](int position) const
+template<typename T>
+const T& matrix<T>::operator[](int position) const
 {
     _ASSERT(position < rows * cols);
     return *(data + position);
 }
 
-double& matrix::operator[](int position)
+template<typename T>
+T& matrix<T>::operator[](int position)
 {
     _ASSERT(position < rows * cols);
     return *(data + position);
 }
 
-matrix matrix::row_mult(int m_row, double k)
+template<typename T>
+matrix<T> matrix<T>::row_mult(int m_row, T k)
 {
     for (int j = m_row * (this->cols); j < (m_row + 1) * (this->cols); ++j)
     {
@@ -73,7 +80,8 @@ matrix matrix::row_mult(int m_row, double k)
     return *this;
 }
 
-matrix matrix::row_linsum(int m_row, const int n_row, double mult)
+template<typename T>
+matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult)
 {
     for (int j = 0; j < this->cols; ++j)
     {
@@ -82,9 +90,10 @@ matrix matrix::row_linsum(int m_row, const int n_row, double mult)
     return *this;
 }
 
-matrix matrix::row_swap(int m_row, int n_row)
+template<typename T>
+matrix<T> matrix<T>::row_swap(int m_row, int n_row)
 {
-    double* temp_row = new double[this->cols];
+    T* temp_row = new T[this->cols];
     for (int j = 0; j < this->cols; ++j)
     {
         *(temp_row + j) = (*this)[m_row * this->cols + j];
@@ -97,63 +106,72 @@ matrix matrix::row_swap(int m_row, int n_row)
     return *this;
 }
 
-void matrix::swap(matrix& M)
+template<typename T>
+void matrix<T>::swap(matrix& M)
 {
     std::swap(this->rows, M.rows);
     std::swap(this->cols, M.cols);
     std::swap(this->data, M.data);
 }
 
-size_t matrix::row_size() const
+template<typename T>
+size_t matrix<T>::row_size() const
 {
     return this->rows;
 }
 
-size_t matrix::col_size() const
+template<typename T>
+size_t matrix<T>::col_size() const
 {
     return this->cols;
 }
 
-double* matrix::begin()
+template<typename T>
+T* matrix<T>::begin()
 {
     return data;
 }
 
-double* matrix::end()
+template<typename T>
+T* matrix<T>::end()
 {
     return data + rows * cols;
 }
-void matrix::readFromFile(const std::string& filename)
+
+template<typename T>
+void matrix<T>::readFromFile(const std::string& filename)
 {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        throw std::runtime_error("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»: " + filename);
+        throw std::runtime_error("Не удалось открыть файл: " + filename);
     }
 
-    // Р§РёС‚Р°РµРј СЂР°Р·РјРµСЂС‹ РјР°С‚СЂРёС†С‹
+    // Читаем размеры матрицы
     file >> rows >> cols;
 
     if (rows == 0 || cols == 0) {
-        throw std::runtime_error("РќРµРєРѕСЂСЂРµРєС‚РЅС‹Рµ СЂР°Р·РјРµСЂС‹ РјР°С‚СЂРёС†С‹");
+        throw std::runtime_error("Некорректные размеры матрицы");
     }
 
-    // РћСЃРІРѕР±РѕР¶РґР°РµРј СЃС‚Р°СЂС‹Рµ РґР°РЅРЅС‹Рµ
+    // Освобождаем старые данные
     delete[] data;
-    data = new double[rows * cols];
+    data = new T[rows * cols];
 
-    // Р§РёС‚Р°РµРј СЌР»РµРјРµРЅС‚С‹ РјР°С‚СЂРёС†С‹
+    // Читаем элементы матрицы
     for (size_t i = 0; i < rows * cols; ++i) {
         if (!(file >> data[i])) {
             delete[] data;
             data = nullptr;
             rows = cols = 0;
-            throw std::runtime_error("РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°");
+            throw std::runtime_error("Ошибка чтения данных из файла");
         }
     }
 
     file.close();
 }
-void matrix::writeToFile(const std::string& filename)
+
+template<typename T>
+void matrix<T>::writeToFile(const std::string& filename)
 {
     std::ofstream file(filename);
     file << rows << ' ' << cols << "\n";
@@ -168,7 +186,8 @@ void matrix::writeToFile(const std::string& filename)
     file.close();
 }
 
-std::ostream& operator<<(std::ostream& out, matrix& M)
+template<typename T>
+std::ostream& operator<<(std::ostream& out, matrix<T>& M)
 {
     auto m = M.row_size();
     auto n = M.col_size();
@@ -183,7 +202,8 @@ std::ostream& operator<<(std::ostream& out, matrix& M)
     return out;
 }
 
-void gauss_step(matrix& M, int row)
+template<typename T>
+void gauss_step(matrix<T>& M, int row)
 {
     auto first_element = M.data[row * M.cols];
     auto main_elem = first_element;
@@ -198,21 +218,22 @@ void gauss_step(matrix& M, int row)
 
 }
 
-//int main()
-//{
-//    matrix A = matrix(2, 2, 1);
-//    matrix B = matrix(3, 2, { 1, 2, 3, 4, 5, 6 });
-//    std::cout << B << std::endl;
-//    B.row_mult(0, 3);
-//    A = B;
-//    A.row_linsum(2, 0, 2);
-//    std::cout << B << '\n' << A << std::endl;
-//    matrix C = matrix(4, 4, 1);
-//    std::cout << C << std::endl;
-//    C.row_mult(1, 2);
-//    C.row_mult(2, 3);
-//    C.row_linsum(3, 1, 2);
-//    C.row_linsum(3, 2, 1);
-//    std::cout << C << std::endl;
-//}
+int main()
+{
+    using T = double;
+    matrix<T> A = matrix<T>(2, 2, 1);
+    matrix<T> B = matrix<T>(3, 2, { 1, 2, 3, 4, 5, 6 });
+    std::cout << B << std::endl;
+    B.row_mult(0, 3);
+    A = B;
+    A.row_linsum(2, 0, 2);
+    std::cout << B << '\n' << A << std::endl;
+    matrix<T> C = matrix<T>(4, 4, 1);
+    std::cout << C << std::endl;
+    C.row_mult(1, 2);
+    C.row_mult(2, 3);
+    C.row_linsum(3, 1, 2);
+    C.row_linsum(3, 2, 1);
+    std::cout << C << std::endl;
+}
 

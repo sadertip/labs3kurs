@@ -1,18 +1,26 @@
 #pragma once
 class matrix
 {
+public:
 	size_t rows = 0;
 	size_t cols = 0;
 	double* data = nullptr;
-public:
 	matrix() : rows(0), cols(0), data(nullptr) {}
 	matrix(size_t m, size_t n) : rows(m), cols(n), data(new double[m * n]) {}
 	matrix(size_t m, size_t n, double value);
-	matrix(const matrix& A);
+	matrix(const matrix& M);
 	matrix(size_t m, size_t n, std::initializer_list<double> arr);
+	
+	matrix& operator=(const matrix& M);
+	
 	const double& operator[](int position) const;
 	double& operator[](int position);
-	matrix row_mult(int m, double k);
+
+	matrix row_mult(int m_row, double k);
+	matrix row_linsum(int m_row, const int n_row, double mult);
+	matrix row_swap(int m_row, int n_row);
+	
+	void swap(matrix& M);
 
 	size_t row_size() const;
 	size_t col_size() const;
@@ -28,17 +36,4 @@ public:
 	void writeToFile(const std::string& filename);
 };
 
-std::ostream& operator<<(std::ostream& out, matrix& A)
-{
-	auto m = A.row_size();
-	auto n = A.col_size();
-	for(int i = 0; i < m; ++i)
-	{
-		for(int j = 0; j < n; ++j)
-		{
-			out << A[i * n + j] << ' ';
-		}
-		out << '\n';
-	}
-	return out;
-}
+std::ostream& operator<<(std::ostream& out, matrix& M);
