@@ -33,7 +33,7 @@ public:
 
 	T* end();
 
-	void readFromFile(const std::string& filename);
+	void readFromFile(std::ifstream& file);
 
 	void writeToFile(const std::string& filename);
 };

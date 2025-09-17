@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <string>
 #include "Matrices_template.h"
+#include "Gaus.h"
 
 template<typename T>
 matrix<T>::~matrix()
@@ -139,35 +140,22 @@ T* matrix<T>::end()
 }
 
 template<typename T>
-void matrix<T>::readFromFile(const std::string& filename)
+void matrix<T>::readFromFile(std::ifstream& file)
 {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        throw std::runtime_error("Не удалось открыть файл: " + filename);
+    if (!(file >> rows >> cols)) {
+        throw std::runtime_error("Не удалось прочитать размеры матрицы.");
     }
-
-    // Читаем размеры матрицы
-    file >> rows >> cols;
-
-    if (rows == 0 || cols == 0) {
-        throw std::runtime_error("Некорректные размеры матрицы");
-    }
-
-    // Освобождаем старые данные
     delete[] data;
     data = new T[rows * cols];
 
-    // Читаем элементы матрицы
     for (size_t i = 0; i < rows * cols; ++i) {
         if (!(file >> data[i])) {
             delete[] data;
             data = nullptr;
             rows = cols = 0;
-            throw std::runtime_error("Ошибка чтения данных из файла");
+            throw std::runtime_error("Ошибка чтения данных матрицы.");
         }
     }
-
-    file.close();
 }
 
 template<typename T>
@@ -221,19 +209,30 @@ void gauss_step(matrix<T>& M, int row)
 int main()
 {
     using T = double;
-    matrix<T> A = matrix<T>(2, 2, 1);
-    matrix<T> B = matrix<T>(3, 2, { 1, 2, 3, 4, 5, 6 });
-    std::cout << B << std::endl;
-    B.row_mult(0, 3);
-    A = B;
-    A.row_linsum(2, 0, 2);
-    std::cout << B << '\n' << A << std::endl;
-    matrix<T> C = matrix<T>(4, 4, 1);
-    std::cout << C << std::endl;
-    C.row_mult(1, 2);
-    C.row_mult(2, 3);
-    C.row_linsum(3, 1, 2);
-    C.row_linsum(3, 2, 1);
-    std::cout << C << std::endl;
+    std::ifstream file("input.txt");
+    matrix<T> A, b;
+    try {
+
+
+        // Читаем первую матрицу (A)
+        A.readFromFile(file);
+
+        // Читаем вторую матрицу (b)
+        b.readFromFile(file);
+
+        file.close(); // Закрываем файл после чтения
+
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Ошибка: " << e.what() << std::endl;
+        if (file.is_open()) {
+            file.close();
+        }
+        return 1;
+    }
+    std::cout << A << std::endl;
+    std::cout << b << std::endl;
+    matrix<T> x = Gauss(A, b);
+    std::cout << x << std::endl;
 }
 
