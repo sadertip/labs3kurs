@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+#include <fstream>
 
 template<typename T>
 class matrix

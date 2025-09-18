@@ -1,3 +1,4 @@
+#pragma once
 #include "Matrices_template.h"
 #include"Gaus.h"
 #include "other.h"
@@ -23,7 +24,7 @@ T norm1(matrix<T>& A)
 		for (size_t i = 0; i < A.rows; ++i) {
 			sumi += std::abs(A(i, j));
 		}
-		ma = std::max(ma, sumi)
+		ma = std::max(ma, sumi);
 	}
 	return ma;
 }
@@ -36,7 +37,7 @@ T norminf(matrix<T>& A)
 		for (size_t j = 0; j < A.cols; ++j) {
 			sumi += std::abs(A(i, j));
 		}
-		ma = std::max(ma, sumi)
+		ma = std::max(ma, sumi);
 	}
 	return ma;
 }
