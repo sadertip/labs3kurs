@@ -18,6 +18,9 @@ public:
 	const T& operator[](int position) const;
 	T& operator[](int position);
 
+	T& operator()(size_t i, size_t j);
+	const T& operator()(size_t i, size_t j)const;
+
 	matrix row_mult(int m_row, T k);
 	matrix row_linsum(int m_row, const int n_row, T mult);
 	matrix row_swap(int m_row, int n_row);
