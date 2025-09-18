@@ -1,9 +1,9 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include <string>
 #include "Matrices_template.h"
-#include "Gaus.h"
 
 template<typename T>
 matrix<T>::~matrix()
@@ -16,7 +16,7 @@ matrix<T>::~matrix()
 
 template<typename T>
 matrix<T>::matrix(size_t m, size_t n, T value)
-    :matrix(m, n)
+    :matrix<T>(m, n)
 {
     for (int i = 0; i < m * n; ++i)
     {
@@ -25,8 +25,8 @@ matrix<T>::matrix(size_t m, size_t n, T value)
 }
 
 template<typename T>
-matrix<T>::matrix(const matrix& M)
-    :matrix(M.row_size(), M.col_size())
+matrix<T>::matrix(const matrix<T>& M)
+    :matrix<T>(M.row_size(), M.col_size())
 {
     auto m = M.row_size();
     auto n = M.col_size();
@@ -38,7 +38,7 @@ matrix<T>::matrix(const matrix& M)
 
 template<typename T>
 matrix<T>::matrix(size_t m, size_t n, std::initializer_list<T> initer)
-    :matrix(m, n)
+    :matrix<T>(m, n)
 {
     _ASSERT(m * n <= initer.size());
     int i = 0;
@@ -50,29 +50,41 @@ matrix<T>::matrix(size_t m, size_t n, std::initializer_list<T> initer)
 }
 
 template<typename T>
-matrix<T>& matrix<T>::operator=(const matrix& M)
+matrix<T>& matrix<T>::operator=(const matrix<T>& M)
 {
-    auto new_matrix = matrix(M);
+    auto new_matrix = matrix<T>(M);
     this->swap(new_matrix);
     return *this;
 }
 
 template<typename T>
-const T& matrix<T>::operator[](int position) const
+const T& matrix<T>::operator[](int pos) const
 {
-    _ASSERT(position < rows * cols);
-    return *(data + position);
+    _ASSERT(pos < rows * cols);
+    return *(data + pos);
 }
 
 template<typename T>
-T& matrix<T>::operator[](int position)
+T& matrix<T>::operator[](int pos)
 {
-    _ASSERT(position < rows * cols);
-    return *(data + position);
+    _ASSERT(pos < rows * cols);
+    return *(data + pos);
 }
 
 template<typename T>
-matrix<T> matrix<T>::row_mult(int m_row, T k)
+matrix<T> matrix<T>::operator*(const matrix<T>& A) const&
+{
+    _ASSERT(this->cols == A.rows);
+    matrix<T> res = matrix<T>(this->rows, A.cols, 0);
+    for (int i = 0; i < this->rows; ++i)
+        for (int k = 0; k < this->cols; ++k)
+            for (int j = 0; j < A.cols; ++j)
+                res[res.pos(i, j)] += (*this)[(*this).pos(i, k)] * A[A.pos(k, j)];
+    return res;
+}
+
+template<typename T>
+matrix<T> matrix<T>::row_mult(int m_row, T k) &
 {
     for (int j = m_row * (this->cols); j < (m_row + 1) * (this->cols); ++j)
     {
@@ -82,7 +94,7 @@ matrix<T> matrix<T>::row_mult(int m_row, T k)
 }
 
 template<typename T>
-matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult)
+matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult) &
 {
     for (int j = 0; j < this->cols; ++j)
     {
@@ -92,23 +104,24 @@ matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult)
 }
 
 template<typename T>
-matrix<T> matrix<T>::row_swap(int m_row, int n_row)
+matrix<T> matrix<T>::row_swap(int m_row, int n_row) &
 {
     T* temp_row = new T[this->cols];
     for (int j = 0; j < this->cols; ++j)
     {
-        *(temp_row + j) = (*this)[m_row * this->cols + j];
+        temp_row[j] = (*this)[m_row * this->cols + j];
     }
     for (int j = 0; j < this->cols; ++j)
     {
         (*this)[m_row * this->cols + j] = (*this)[n_row * this->cols + j];
-        (*this)[n_row * this->cols + j] = *(temp_row + j);
+        (*this)[n_row * this->cols + j] = temp_row[j];
     }
+    delete[] temp_row;
     return *this;
 }
 
 template<typename T>
-void matrix<T>::swap(matrix& M)
+void matrix<T>::swap(matrix<T>& M)
 {
     std::swap(this->rows, M.rows);
     std::swap(this->cols, M.cols);
@@ -116,13 +129,19 @@ void matrix<T>::swap(matrix& M)
 }
 
 template<typename T>
-size_t matrix<T>::row_size() const
+int matrix<T>::pos(int i, int j) const &
+{
+    return i * this->cols + j;
+}
+
+template<typename T>
+size_t matrix<T>::row_size() const &
 {
     return this->rows;
 }
 
 template<typename T>
-size_t matrix<T>::col_size() const
+size_t matrix<T>::col_size() const &
 {
     return this->cols;
 }
@@ -191,48 +210,26 @@ std::ostream& operator<<(std::ostream& out, matrix<T>& M)
 }
 
 template<typename T>
-void gauss_step(matrix<T>& M, int row)
+matrix<T> eye(size_t m, T value)
 {
-    auto first_element = M.data[row * M.cols];
-    auto main_elem = first_element;
-    for (size_t i = first_element; i <= row * M.cols; ++i)
-    {
-        M.data[i] /= main_elem;
-    }
-    for (size_t i = row; i <= M.rows; ++i)
-    {
-        M[i] = M[i] - M[row];
-    }
-
+    matrix<T> E = matrix<T>(m, m, 0);
+    if (value != 0)
+        for (int i = 0; i < m; ++i)
+            E[E.pos(i, i)] = value;
+    return E;
 }
 
-int main()
-{
-    using T = double;
-    std::ifstream file("input.txt");
-    matrix<T> A, b;
-    try {
-
-
-        // Читаем первую матрицу (A)
-        A.readFromFile(file);
-
-        // Читаем вторую матрицу (b)
-        b.readFromFile(file);
-
-        file.close(); // Закрываем файл после чтения
-
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Ошибка: " << e.what() << std::endl;
-        if (file.is_open()) {
-            file.close();
-        }
-        return 1;
-    }
-    std::cout << A << std::endl;
-    std::cout << b << std::endl;
-    matrix<T> x = Gauss(A, b);
-    std::cout << x << std::endl;
-}
-
+//int main()
+//{
+//    using T = double;
+//    matrix<T> A = matrix<T>(2, 3, { 1, 2, 3, 4, 5, 6});
+//    matrix<T> B = matrix<T>(3, 2, { 9, 8, 7, 6, 5,4 });
+//    std::cout << A << '\n' << B << std::endl;
+//    auto C = A * B;
+//    std::cout << C << std::endl;
+//    auto E = eye<T>(2, 1);
+//    auto temp = C * E;
+//    C = E * C;
+//    std::cout << temp << '\n' << C << std::endl;
+//    return 0;
+//}

@@ -1,6 +1,8 @@
+#pragma once
 #include <iostream>
-#include "Matrices_template.h"
-#include"Gaus.h"
+#include "Matrices_template.cpp"
+#include "Gaus.h"
+
 template<typename T>
 void pivot(matrix<T>& M, matrix<T>& b, int row)
 {
@@ -20,6 +22,7 @@ void pivot(matrix<T>& M, matrix<T>& b, int row)
         b.row_swap(row, maxi_elem_num / M.cols);
     }
 }
+
 template<typename T>
 void gauss_step(matrix<T>& M, matrix<T>& b, int row)
 {
@@ -48,6 +51,7 @@ void gauss_step(matrix<T>& M, matrix<T>& b, int row)
     }
 
 }
+
 template<typename T>
 matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
 {
@@ -62,7 +66,7 @@ matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
             sum += A[A.cols * i + j] * x[j];
         }
 
-        if (std::abs(A[A.cols * i + i]) < 1e-9) // Использование небольшого эпсилон
+        if (std::abs(A[A.cols * i + i]) < 1e-9)
         {
             throw std::runtime_error("Division by zero occurred. matrix<T> may not be invertible.");
         }
@@ -72,6 +76,7 @@ matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
 
     return x;
 }
+
 template<typename T>
 matrix<T> Gauss(matrix<T>& A, matrix<T>& b)
 {
@@ -83,3 +88,33 @@ matrix<T> Gauss(matrix<T>& A, matrix<T>& b)
     matrix<T> x = gauss_back(A, b);
     return x;
 }
+
+//int main()
+//{
+//    using T = double;
+//    std::ifstream file("input.txt");
+//    matrix<T> A, b;
+//    try {
+//
+//
+//        // Читаем первую матрицу (A)
+//        A.readFromFile(file);
+//
+//        // Читаем вторую матрицу (b)
+//        b.readFromFile(file);
+//
+//        file.close(); // Закрываем файл после чтения
+//
+//    }
+//    catch (const std::exception& e) {
+//        std::cerr << "Ошибка: " << e.what() << std::endl;
+//        if (file.is_open()) {
+//            file.close();
+//        }
+//        return 1;
+//    }
+//    std::cout << A << std::endl;
+//    std::cout << b << std::endl;
+//    matrix<T> x = Gauss(A, b);
+//    std::cout << x << std::endl;
+//}
