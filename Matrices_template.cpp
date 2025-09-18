@@ -72,7 +72,6 @@ T& matrix<T>::operator[](int pos)
 }
 
 template<typename T>
-<<<<<<< HEAD
 matrix<T> matrix<T>::operator*(const matrix<T>& A) const&
 {
     _ASSERT(this->cols == A.rows);
@@ -86,18 +85,6 @@ matrix<T> matrix<T>::operator*(const matrix<T>& A) const&
 
 template<typename T>
 matrix<T> matrix<T>::row_mult(int m_row, T k) &
-=======
-T& matrix<T>::operator()(size_t i, size_t j) {
-    return data[i * cols + j];
-}
-template<typename T>
-const T& matrix<T>::operator()(size_t i, size_t j) const {
-    return data[i * cols + j];
-}
-
-template<typename T>
-matrix<T> matrix<T>::row_mult(int m_row, T k)
->>>>>>> f4ae62de1717a51f645d78289d77eb93bdf47e29
 {
     for (int j = m_row * (this->cols); j < (m_row + 1) * (this->cols); ++j)
     {

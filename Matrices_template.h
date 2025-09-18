@@ -16,17 +16,8 @@ public:
 
 	matrix<T>& operator=(const matrix<T>& M);
 
-<<<<<<< HEAD
 	const T& operator[](int pos) const;
 	T& operator[](int pos);
-=======
-	T& operator()(size_t i, size_t j);
-	const T& operator()(size_t i, size_t j)const;
-
-	matrix row_mult(int m_row, T k);
-	matrix row_linsum(int m_row, const int n_row, T mult);
-	matrix row_swap(int m_row, int n_row);
->>>>>>> f4ae62de1717a51f645d78289d77eb93bdf47e29
 
 	matrix<T> operator*(const matrix<T>& A) const&;
 
