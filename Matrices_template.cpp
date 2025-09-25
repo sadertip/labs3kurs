@@ -135,6 +135,18 @@ int matrix<T>::pos(int i, int j) const &
 }
 
 template<typename T>
+T& matrix<T>::operator()(size_t i, size_t j) &
+{
+    return data[i * cols + j];
+}
+
+template<typename T>
+const T& matrix<T>::operator()(size_t i, size_t j) const &
+{
+    return data[i * cols + j];
+}
+
+template<typename T>
 size_t matrix<T>::row_size() const &
 {
     return this->rows;
@@ -162,7 +174,7 @@ template<typename T>
 void matrix<T>::readFromFile(std::ifstream& file)
 {
     if (!(file >> rows >> cols)) {
-        throw std::runtime_error("Не удалось прочитать размеры матрицы.");
+        throw std::runtime_error("Matrix size read error");
     }
     delete[] data;
     data = new T[rows * cols];
@@ -172,7 +184,7 @@ void matrix<T>::readFromFile(std::ifstream& file)
             delete[] data;
             data = nullptr;
             rows = cols = 0;
-            throw std::runtime_error("Ошибка чтения данных матрицы.");
+            throw std::runtime_error("Matrix data read error");
         }
     }
 }
@@ -191,6 +203,30 @@ void matrix<T>::writeToFile(const std::string& filename)
     }
 
     file.close();
+}
+
+template<typename T>
+matrix<T>::matrix(const std::string& filename)
+    :matrix()
+{
+    std::ifstream file(filename);
+    try
+    {
+        (*this).readFromFile(file);
+
+        file.close(); // Закрываем файл после чтения
+
+    }
+    catch (const std::exception& e) {
+        //std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "File opening error" << std::endl;
+        if (file.is_open())
+        {
+            file.close();
+        }
+        //return 1;
+    }
+    
 }
 
 template<typename T>
@@ -215,7 +251,7 @@ matrix<T> eye(size_t m, T value)
     matrix<T> E = matrix<T>(m, m, 0);
     if (value != 0)
         for (int i = 0; i < m; ++i)
-            E[E.pos(i, i)] = value;
+            E(i ,i) = value;
     return E;
 }
 

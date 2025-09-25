@@ -31,6 +31,10 @@ public:
 
 	inline int pos(int i, int j) const &;
 
+	T& operator()(size_t i, size_t j) &;
+
+	const T& operator()(size_t i, size_t j) const &;
+
 	size_t row_size() const &;
 	size_t col_size() const &;
 
@@ -43,6 +47,8 @@ public:
 	void readFromFile(std::ifstream& file);
 
 	void writeToFile(const std::string& filename);
+
+	matrix(const std::string& filename);
 };
 
 template<typename T>

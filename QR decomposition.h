@@ -2,13 +2,18 @@
 
 #include "Matrices_template.h"
 
-matrix<double> QR_decomposition(matrix<double>& A, matrix<double>& b);
+template<typename T>
+matrix<T> QR_decomposition(matrix<T>& A, matrix<T>& b);
 
-//double C_ij(matrix<double>& A, int i, int j);
-//double S_ij(matrix<double>& A, int i, int j);
+//T C_ij(matrix<T>& A, int i, int j);
+//T S_ij(matrix<T>& A, int i, int j);
 
-std::pair<double, double> Coeffs_ij(matrix<double>& A, int i, int j);
+template<typename T>
+std::pair<T, T> Coeffs_ij(matrix<T>& A, int i, int j);
 
-void QR_row_step(matrix<double>& A, matrix<double>& b, double c_ij, double s_ij, int row, int step);
-void QR_col_step(matrix<double>& A, matrix<double>& b, matrix<double>& Q, int j);
+template<typename T>
+void QR_row_step(matrix<T>& A, matrix<T>& b, T c_ij, T s_ij, int row, int step);
+
+template<typename T>
+void QR_col_step(matrix<T>& A, matrix<T>& b, matrix<T>& Q, int j);
 

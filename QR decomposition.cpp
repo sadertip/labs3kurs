@@ -4,11 +4,12 @@
 //#include "Matrices_template.cpp"
 #include "Gaus.cpp"
 
-matrix<double> QR_decomposition(matrix<double>& A, matrix<double>& b)
+template<typename T>
+matrix<T> QR_decomposition(matrix<T>& A, matrix<T>& b)
 {
-	matrix<double> Q = eye<double>(A.rows, 1);
-	matrix<double> R = matrix<double>(A);
-	matrix<double> b1 = matrix<double>(b);
+	matrix<T> Q = eye<T>(A.rows, 1);
+	matrix<T> R = matrix(A);
+	matrix<T> b1 = matrix(b);
 
 	for (int step = 0; step < A.cols - 1; ++step)
 	{
@@ -16,33 +17,35 @@ matrix<double> QR_decomposition(matrix<double>& A, matrix<double>& b)
 	}
 
 	auto x = gauss_back(R, b1);
-	std::cout << "Matrix Q = \n" << Q << "Matrix R = \n" << R << "Ans = " << x << std::endl;
-	auto A1 = Q * R;
-	std::cout << A1 << std::endl;
+	std::cout << "Matrix Q = \n" << Q << "Matrix R = \n" << R << std::endl;
+	//auto A1 = Q * R;
+	//std::cout << A1 << std::endl;
 	return x;
 }
 
-std::pair<double, double> Coeffs_ij(matrix<double>& A, int i, int j)
+template<typename T>
+std::pair<T, T> Coeffs_ij(matrix<T>& A, int i, int j)
 {
-	double a1 = A[A.pos(i, i)];
-	double a2 = A[A.pos(j, i)];
-	double radix = sqrt(a1 * a1 + a2 * a2);
-	double c = a1 / radix;
-	double s = a2 / radix;
+	T a1 = A(i, i);
+	T a2 = A(j, i);
+	T radix = sqrt(a1 * a1 + a2 * a2);
+	T c = a1 / radix;
+	T s = a2 / radix;
 	return { c,s };
 }
 
-void QR_row_step(matrix<double>& A, matrix<double>& b, double c_ij, double s_ij, int row, int step)
+template<typename T>
+void QR_row_step(matrix<T>& A, matrix<T>& b, T c_ij, T s_ij, int row, int step)
 {
-	double* temp = new double[A.cols];
+	T* temp = new T[A.cols];
 
-	std::cout << "before: \n" << "R = \n" << A << '\n' << "b1 = \n" << b << std::endl;
+	//std::cout << "before: \n" << "R = \n" << A << '\n' << "b1 = \n" << b << std::endl;
 
 	for (int j = 0; j < A.cols; ++j)
 	{
 		temp[j] = A[A.pos(step, j)];
 	}
-	double b_temp = b[step];
+	T b_temp = b[step];
 
 	for (int j = 0; j < A.cols; ++j)
 	{
@@ -50,7 +53,7 @@ void QR_row_step(matrix<double>& A, matrix<double>& b, double c_ij, double s_ij,
 	}
 	b[step] = c_ij * b_temp + s_ij * b[row];
 
-	std::cout << "R = \n" << A << '\n' << "b1 = \n" << b << std::endl;
+	//std::cout << "R = \n" << A << '\n' << "b1 = \n" << b << std::endl;
 
 	for (int j = 0; j < A.cols; ++j)
 	{
@@ -58,31 +61,32 @@ void QR_row_step(matrix<double>& A, matrix<double>& b, double c_ij, double s_ij,
 	}
 	b[row] = -s_ij * b_temp + c_ij * b[row];
 
-	std::cout << "R = \n" << A << '\n' << "b1 = \n" << b << std::endl;
+	//std::cout << "R = \n" << A << '\n' << "b1 = \n" << b << std::endl;
 
 	delete[] temp;
 }
 
-void QR_col_step(matrix<double>& A, matrix<double>& b, matrix<double>& Q, int step)
+template<typename T>
+void QR_col_step(matrix<T>& A, matrix<T>& b, matrix<T>& Q, int step)
 {
-	std::pair<double, double> coeffs;
+	std::pair<T, T> coeffs;
 
 	for (int i = step + 1; i < A.rows; ++i)
 	{
 		coeffs = Coeffs_ij(A, step, i);
 
-		matrix<double> T = eye<double>(Q.rows, 1);
+		matrix<T> Temp = eye<T>(Q.rows, 1.);
 
-		T[T.pos(step, step)] = coeffs.first;
-		T[T.pos(step, i)] = coeffs.second;
-		T[T.pos(i, i)] = coeffs.first;
-		T[T.pos(i, step)] = -coeffs.second;
+		Temp(step, step) = coeffs.first;
+		Temp(step, i) = coeffs.second;
+		Temp(i, i) = coeffs.first;
+		Temp(i, step) = -coeffs.second;
 
-		std::cout << "step, row = " << step << ' ' << i << '\n' << T << std::endl;
+		//std::cout << "step, row = " << step << ' ' << i << '\n' << Temp << std::endl;
 
-		Q = T * Q;
+		Q = Temp * Q;
 
-		std::cout << Q << std::endl;
+		//std::cout << Q << std::endl;
 
 		QR_row_step(A, b, coeffs.first, coeffs.second, i, step);
 	}
