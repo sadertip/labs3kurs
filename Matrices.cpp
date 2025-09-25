@@ -184,20 +184,20 @@ std::ostream& operator<<(std::ostream& out, matrix& M)
     return out;
 }
 
-void gauss_step(matrix& M, int row)
-{
-    auto first_element = M.data[row * M.cols];
-    auto main_elem = first_element;
-    for (size_t i = first_element; i <= row * M.cols; ++i)
-    {
-        M.data[i] /= main_elem;
-    }
-    for (size_t i = row; i <= M.rows; ++i)
-    {
-        M[i] = M[i] - M[row];
-    }
-
-}
+//void gauss_step(matrix& M, int row)
+//{
+//    auto first_element = M.data[row * M.cols];
+//    auto main_elem = first_element;
+//    for (size_t i = first_element; i <= row * M.cols; ++i)
+//    {
+//        M.data[i] /= main_elem;
+//    }
+//    for (size_t i = row; i <= M.rows; ++i)
+//    {
+//        M[i] = M[i] - M[row];
+//    }
+//
+//}
 
 //int main()
 //{

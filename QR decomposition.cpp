@@ -17,7 +17,7 @@ matrix<T> QR_decomposition(matrix<T>& A, matrix<T>& b)
 	}
 
 	auto x = gauss_back(R, b1);
-	std::cout << "Matrix Q = \n" << Q << "Matrix R = \n" << R << std::endl;
+	std::cout << "Matrix Q: \n" << Q << '\n' << "Matrix R: \n" << R << std::endl;
 	//auto A1 = Q * R;
 	//std::cout << A1 << std::endl;
 	return x;
@@ -43,13 +43,13 @@ void QR_row_step(matrix<T>& A, matrix<T>& b, T c_ij, T s_ij, int row, int step)
 
 	for (int j = 0; j < A.cols; ++j)
 	{
-		temp[j] = A[A.pos(step, j)];
+		temp[j] = A(step, j);
 	}
 	T b_temp = b[step];
 
 	for (int j = 0; j < A.cols; ++j)
 	{
-		A[A.pos(step, j)] = c_ij * A[A.pos(step, j)] + s_ij * A[A.pos(row, j)];
+		A(step, j) = c_ij * A(step, j) + s_ij * A(row, j);
 	}
 	b[step] = c_ij * b_temp + s_ij * b[row];
 
@@ -57,7 +57,7 @@ void QR_row_step(matrix<T>& A, matrix<T>& b, T c_ij, T s_ij, int row, int step)
 
 	for (int j = 0; j < A.cols; ++j)
 	{
-		A[A.pos(row, j)] = -s_ij * temp[j] + c_ij * A[A.pos(row, j)];
+		A(row, j) = -s_ij * temp[j] + c_ij * A(row, j);
 	}
 	b[row] = -s_ij * b_temp + c_ij * b[row];
 

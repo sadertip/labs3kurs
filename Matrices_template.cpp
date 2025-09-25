@@ -50,11 +50,24 @@ matrix<T>::matrix(size_t m, size_t n, std::initializer_list<T> initer)
 }
 
 template<typename T>
+matrix<T>::matrix(matrix&& M) noexcept
+{
+    this->swap(M);
+}
+
+template<typename T>
 matrix<T>& matrix<T>::operator=(const matrix<T>& M)
 {
     auto new_matrix = matrix<T>(M);
     this->swap(new_matrix);
     return *this;
+}
+
+template<typename T>
+matrix<T>& matrix<T>::operator=(matrix<T>&& M) noexcept
+{
+    this->swap(M);
+    return (*this);
 }
 
 template<typename T>
@@ -218,7 +231,7 @@ matrix<T>::matrix(const std::string& filename)
 
     }
     catch (const std::exception& e) {
-        //std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         std::cerr << "File opening error" << std::endl;
         if (file.is_open())
         {

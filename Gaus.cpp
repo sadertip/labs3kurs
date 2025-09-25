@@ -27,8 +27,8 @@ template<typename T>
 void gauss_step(matrix<T>& M, matrix<T>& b, int row)
 {
     pivot(M, b, row);
-    std::cout << M << std::endl;
-    std::cout << b << std::endl;
+    //std::cout << M << std::endl;
+    //std::cout << b << std::endl;
     size_t main_elem_num = row * M.cols;
     auto main_elem = M.data[row * M.cols];
 
@@ -57,7 +57,6 @@ matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
 {
     size_t n = A.rows;
     matrix<T> x(n, 1);
-
     for (int i = n - 1; i >= 0; --i)
     {
         T sum = 0.0;
@@ -66,14 +65,22 @@ matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
             sum += A[A.cols * i + j] * x[j];
         }
 
-        if (std::abs(A[A.cols * i + i]) < 1e-9)
+        try
         {
-            throw std::runtime_error("Division by zero occurred. matrix<T> may not be invertible.");
+            if (std::abs(A[A.cols * i + i]) < 1e-6)
+            {
+                std::cout << "No single solution" << std::endl;
+                return matrix<T>(A.rows, 1, 0);
+                //throw std::runtime_error("Division by zero occurred. matrix<T> may not be invertible.");
+            }
+        }
+        catch (std::string err_message)
+        {
+            std::cerr << err_message << std::endl;
         }
 
         x[i] = (b[i] - sum) / A[A.cols * i + i];
     }
-
     return x;
 }
 

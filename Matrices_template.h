@@ -14,14 +14,16 @@ public:
 	matrix(size_t m, size_t n, T value);
 	matrix(const matrix<T>& M);
 	matrix(size_t m, size_t n, std::initializer_list<T> arr);
-
+	matrix(matrix&& M) noexcept;
 
 	matrix<T>& operator=(const matrix<T>& M);
+	matrix<T>& operator=(matrix<T>&& M) noexcept;
 
 	const T& operator[](int pos) const;
 	T& operator[](int pos);
 
 	matrix<T> operator*(const matrix<T>& A) const&;
+	//matrix<T> operator*(const matrix<T>& A)&&;
 
 	matrix<T> row_mult(int m_row, T k) &;
 	matrix<T> row_linsum(int m_row, const int n_row, T mult) &;
