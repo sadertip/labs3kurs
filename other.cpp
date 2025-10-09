@@ -30,8 +30,35 @@ T norm1(matrix<T>& A)
 	}
 	return ma;
 }
+
+template<typename T>
+T norm1(const matrix<T>& A)
+{
+	T ma = 0;
+	for (size_t j = 0; j < A.cols; ++j) {
+		T sumi = 0;
+		for (size_t i = 0; i < A.rows; ++i) {
+			sumi += std::abs(A(i, j));
+		}
+		ma = std::max(ma, sumi);
+	}
+	return ma;
+}
 template<typename T>
 T norminf(matrix<T>& A)
+{
+	T ma = 0;
+	for (size_t i = 0; i < A.rows; ++i) {
+		T sumi = 0;
+		for (size_t j = 0; j < A.cols; ++j) {
+			sumi += std::abs(A(i, j));
+		}
+		ma = std::max(ma, sumi);
+	}
+	return ma;
+}
+template<typename T>
+T norminf(const matrix<T>& A)
 {
 	T ma = 0;
 	for (size_t i = 0; i < A.rows; ++i) {
@@ -77,7 +104,7 @@ void matrix_test(const std::string& matrix_file, const std::string& vector_file)
 
 	auto ans_diff1 = mismatch(x01, x1);
 	std::cout << "Ans mod: \n" << x01 << "Ans diff = " << ans_diff1 << '\n' << std::endl;
-	
+
 	auto condV1 = cond1(A);
 	auto condVinf = condinf(A);
 	std::cout << "Matrix cond1 = " << condV1 << "\nMatrix condinf = " << condVinf << std::endl;
@@ -128,7 +155,7 @@ matrix<T> reverse(const matrix<T>& m) {
 	matrix<T> b_vector(n, 1);
 
 	for (size_t j = 0; j < n; ++j) {
-		// Формирование вектора b (e_j)
+
 		for (size_t i = 0; i < n; ++i) {
 			b_vector(i, 0) = (i == j) ? T(1) : T(0);
 		}

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 
+
 template<typename T>
 class matrix
 {
@@ -24,21 +25,23 @@ public:
 
 	matrix<T> operator*(const matrix<T>& A) const&;
 	//matrix<T> operator*(const matrix<T>& A)&&;
-
-	matrix<T> row_mult(int m_row, T k) &;
-	matrix<T> row_linsum(int m_row, const int n_row, T mult) &;
-	matrix<T> row_swap(int m_row, int n_row) &;
+	matrix<T> operator*(T k) const;
+	matrix<T> operator+(const matrix<T>& M) const&;
+	matrix<T> operator-(const matrix<T>& M) const&;
+	matrix<T> row_mult(int m_row, T k)&;
+	matrix<T> row_linsum(int m_row, const int n_row, T mult)&;
+	matrix<T> row_swap(int m_row, int n_row)&;
 
 	void swap(matrix<T>& M);
 
-	inline int pos(int i, int j) const &;
+	inline int pos(int i, int j) const&;
 
-	T& operator()(size_t i, size_t j) &;
+	T& operator()(size_t i, size_t j)&;
 
-	const T& operator()(size_t i, size_t j) const &;
+	const T& operator()(size_t i, size_t j) const&;
 
-	size_t row_size() const &;
-	size_t col_size() const &;
+	size_t row_size() const&;
+	size_t col_size() const&;
 
 	~matrix();
 
@@ -51,6 +54,11 @@ public:
 	void writeToFile(const std::string& filename);
 
 	matrix(const std::string& filename);
+
+	matrix<T> get_D() const;
+	matrix<T> get_L() const;
+	matrix<T> get_U() const;
+
 };
 
 template<typename T>

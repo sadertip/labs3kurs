@@ -95,9 +95,40 @@ matrix<T> matrix<T>::operator*(const matrix<T>& A) const&
                 res[res.pos(i, j)] += (*this)[(*this).pos(i, k)] * A[A.pos(k, j)];
     return res;
 }
-
 template<typename T>
-matrix<T> matrix<T>::row_mult(int m_row, T k) &
+matrix<T> matrix<T>::operator*(T k) const {
+    matrix<T> result = matrix<T>(this->rows, this->cols);
+    for (size_t i = 0; i < this->rows * this->cols; ++i) {
+        result.data[i] = data[i] * k;
+    }
+    return result;
+}
+template<typename T>
+matrix<T>matrix<T>::operator+(const matrix<T>& M) const& {
+    if (this->rows != M.rows || this->cols != M.cols) {
+        throw std::runtime_error("Matrix dimensions must agree for addition.");
+    }
+    matrix<T> result = matrix<T>(this->rows, this->cols);
+    for (size_t i = 0; i < this->rows * this->cols; ++i) {
+        result.data[i] = data[i] + M.data[i];
+    }
+    return result;
+}
+
+// Вычитание матриц/векторов
+template<typename T>
+matrix<T> matrix<T>::operator-(const matrix<T>& M) const& {
+    if (rows != M.rows || cols != M.cols) {
+        throw std::runtime_error("Matrix dimensions must agree for subtraction.");
+    }
+    matrix<T> result = matrix<T>(this->rows, this->cols);
+    for (size_t i = 0; i < this->rows * this->cols; ++i) {
+        result.data[i] = data[i] - M.data[i];
+    }
+    return result;
+}
+template<typename T>
+matrix<T> matrix<T>::row_mult(int m_row, T k)&
 {
     for (int j = m_row * (this->cols); j < (m_row + 1) * (this->cols); ++j)
     {
@@ -107,7 +138,7 @@ matrix<T> matrix<T>::row_mult(int m_row, T k) &
 }
 
 template<typename T>
-matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult) &
+matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult)&
 {
     for (int j = 0; j < this->cols; ++j)
     {
@@ -117,7 +148,7 @@ matrix<T> matrix<T>::row_linsum(int m_row, const int n_row, T mult) &
 }
 
 template<typename T>
-matrix<T> matrix<T>::row_swap(int m_row, int n_row) &
+matrix<T> matrix<T>::row_swap(int m_row, int n_row)&
 {
     T* temp_row = new T[this->cols];
     for (int j = 0; j < this->cols; ++j)
@@ -142,31 +173,31 @@ void matrix<T>::swap(matrix<T>& M)
 }
 
 template<typename T>
-int matrix<T>::pos(int i, int j) const &
+int matrix<T>::pos(int i, int j) const&
 {
     return i * this->cols + j;
 }
 
 template<typename T>
-T& matrix<T>::operator()(size_t i, size_t j) &
+T& matrix<T>::operator()(size_t i, size_t j)&
 {
     return data[i * cols + j];
 }
 
 template<typename T>
-const T& matrix<T>::operator()(size_t i, size_t j) const &
+const T& matrix<T>::operator()(size_t i, size_t j) const&
 {
     return data[i * cols + j];
 }
 
 template<typename T>
-size_t matrix<T>::row_size() const &
+size_t matrix<T>::row_size() const&
 {
     return this->rows;
 }
 
 template<typename T>
-size_t matrix<T>::col_size() const &
+size_t matrix<T>::col_size() const&
 {
     return this->cols;
 }
@@ -239,7 +270,7 @@ matrix<T>::matrix(const std::string& filename)
         }
         //return 1;
     }
-    
+
 }
 
 template<typename T>
@@ -264,10 +295,56 @@ matrix<T> eye(size_t m, T value)
     matrix<T> E = matrix<T>(m, m, 0);
     if (value != 0)
         for (int i = 0; i < m; ++i)
-            E(i ,i) = value;
+            E(i, i) = value;
     return E;
 }
+template<typename T>
+matrix<T> matrix<T>::get_D() const {
 
+    if (rows != cols) {
+        throw std::runtime_error("Matrix must be square for decomposition (D).");
+    }
+    matrix<T> D(rows, cols, 0.0);
+
+    for (size_t i = 0; i < rows; ++i) {
+
+        D.data[i * cols + i] = data[i * cols + i];
+    }
+    return D;
+}
+
+template<typename T>
+matrix<T> matrix<T>::get_L() const {
+
+    if (rows != cols) {
+        throw std::runtime_error("Matrix must be square for decomposition (L).");
+    }
+    matrix<T> L(rows, cols, 0.0);
+
+    for (size_t i = 1; i < rows; ++i) {
+        for (size_t j = 0; j < i; ++j) {
+
+            L.data[i * cols + j] = data[i * cols + j];
+        }
+    }
+    return L;
+}
+
+template<typename T>
+matrix<T> matrix<T>::get_U() const {
+
+    if (rows != cols) {
+        throw std::runtime_error("Matrix must be square for decomposition (U).");
+    }
+    matrix<T> U(rows, cols, 0.0);
+
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = i + 1; j < cols; ++j) {
+            U.data[i * cols + j] = data[i * cols + j];
+        }
+    }
+    return U;
+}
 //int main()
 //{
 //    using T = double;
