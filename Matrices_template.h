@@ -63,6 +63,8 @@ public:
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, matrix<T>& M);
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const matrix<T>& M);
 
 template<typename T>
 matrix<T> eye(size_t m, T value);

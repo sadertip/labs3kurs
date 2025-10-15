@@ -282,7 +282,22 @@ std::ostream& operator<<(std::ostream& out, matrix<T>& M)
     {
         for (int j = 0; j < n; ++j)
         {
-            out << M[i * n + j] << ' ';
+            out << M(i,j) << ' ';
+        }
+        out << '\n';
+    }
+    return out;
+}
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const matrix<T>& M)
+{
+    auto m = M.row_size();
+    auto n = M.col_size();
+    for (int i = 0; i < m; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+        {
+            out << M(i, j) << ' ';
         }
         out << '\n';
     }

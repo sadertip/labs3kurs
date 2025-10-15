@@ -8,7 +8,10 @@
 int main()
 {
 	using T = double;
-	matrix<T> A1 = matrix<T>(3, 3, { 1,0,4,0,1,1,1,2,1 });
+	matrix<T> A1 = matrix<T>(4, 4, {15 ,2, -3,7,     
+	  -5 ,11,  2, -3,
+	  0.0,  -1,   7.0, 4, 
+	  12,  0 , -6, 20});
 	matrix<T> b1 = matrix<T>(3, 1, { 1, 2, 3 });
 	matrix<T> x0(3, 1, { 0.0, 0.0,0.0 });
 	T tau = 0.05;
@@ -27,22 +30,37 @@ int main()
 
 	try {
 
-		matrix<T> A = matrix<T>(4, 4, { 15,2,-3,7,-5,11,2,-3,0,-1,7,4,12,0,-6,20 });
-		matrix<T> b = matrix<T>(4, 1, { 53, -90, 107,68 });
+		matrix<T> A = matrix<T>(4, 4, { 15 ,2, -3,7,
+	  -5 ,11,  2, -3,
+	  0.0,  -1,   7.0, 4,
+	  12,  0 , -6, 20 });
+		matrix<T> b = matrix<T>(4, 1, { 53, -90.0   , 107.0   , 68 });
 		matrix<T> x0(4, 1, { 1.0, 1.0,1.0,1.0 });
 
 		std::cout << "Matrix A:\n" << A << "\n";
 		std::cout << "Vector b:\n" << b << "\n";
 
+		matrix<T> solution10 = simple_iteration_method(A, b, x0, 0.1, max_iter, epsilon);
 		matrix<T> solution1 = simple_iteration_method(A, b, x0, tau, max_iter, epsilon);
 		matrix<T> solution2 = jacobi_method_elementwise(A, b, x0, max_iter, epsilon);
 		matrix<T> solution3 = sor_method(A, b, x0, 1., max_iter, epsilon);
 		matrix<T> solution4 = sor_method(A, b, x0, omega, max_iter, epsilon);
 
+		std::cout << "\nbad simple_iteration Solution:\n" << solution10 << "\n";
 		std::cout << "\nsimple_iteration Solution:\n" << solution1 << "\n";
 		std::cout << "\njacobi_method Solution:\n" << solution2 << "\n";
 		std::cout << "\nSeidel Solution:\n" << solution3 << "\n";
 		std::cout << "\nRelaxation Solution:\n" << solution4 << "\n";
+
+
+		std::pair<matrix<T>, matrix<T>> components10 = get_simple_iteration_components(A, b, tau);
+
+		std::cout << "\nbad simple_iteration C :\n";
+		std::cout << components10.first << std::endl;
+		std::cout << "\nbad simple_iteration y :\n";
+		std::cout << components10.second << std::endl;
+		std::cout << "\nnorm C :\n";
+		std::cout << norminf(components10.first) << std::endl;
 
 		std::pair<matrix<T>, matrix<T>> components1 = get_simple_iteration_components(A, b, tau);
 
