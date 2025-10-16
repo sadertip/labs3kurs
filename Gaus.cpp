@@ -10,7 +10,7 @@ void pivot(matrix<T>& M, matrix<T>& b, int row)
     size_t maxi_elem_num = row * M.cols + row;
     for (int i = row * M.cols + row; i <= M.cols * M.cols - 1; i += M.cols)
     {
-        if (maxi < M[i])
+        if (std::abs(maxi) < std::abs(M[i]))
         {
             maxi = M[i];
             maxi_elem_num = i;
@@ -67,7 +67,7 @@ matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
 
         try
         {
-            if (std::abs(A[A.cols * i + i]) < 1e-6)
+            if (std::abs(A[A.cols * i + i]) < 1e-7)
             {
                 std::cout << "No single solution" << std::endl;
                 return matrix<T>(A.rows, 1, 0);
@@ -91,6 +91,7 @@ matrix<T> Gauss(matrix<T>& A, matrix<T>& b)
     for (size_t i = 0; i < A.rows - 1; ++i)
     {
         gauss_step(A, b, i);
+
     }
     matrix<T> x = gauss_back(A, b);
     return x;

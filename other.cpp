@@ -161,8 +161,6 @@ matrix<T> reverse(const matrix<T>& m) {
 		}
 
 		matrix<T> A_copy = m;
-
-
 		matrix<T> solution_vector = Gauss(A_copy, b_vector);
 
 		for (size_t i = 0; i < n; ++i) {
