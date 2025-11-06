@@ -15,5 +15,5 @@ template<typename T>
 void QR_row_step(matrix<T>& A, matrix<T>& b, T c_ij, T s_ij, int row, int step);
 
 template<typename T>
-void QR_col_step(matrix<T>& A, matrix<T>& b, matrix<T>& Q, int j);
+void QR_col_step(matrix<T>& A, matrix<T>& b, matrix<T>& Q, int step);
 

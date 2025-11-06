@@ -70,7 +70,7 @@ matrix<T> gauss_back(matrix<T>& A, matrix<T>& b)
             if (std::abs(A[A.cols * i + i]) < 1e-6)
             {
                 std::cout << "No single solution" << std::endl;
-                return matrix<T>(A.rows, 1, 0);
+                //return matrix<T>(A.rows, 1, 0);
                 //throw std::runtime_error("Division by zero occurred. matrix<T> may not be invertible.");
             }
         }

@@ -31,6 +31,8 @@ public:
 	matrix<T> row_mult(int m_row, T k)&;
 	matrix<T> row_linsum(int m_row, const int n_row, T mult)&;
 	matrix<T> row_swap(int m_row, int n_row)&;
+	matrix<T> tranpose()&;
+	matrix<T> minor(int n);
 
 	void swap(matrix<T>& M);
 

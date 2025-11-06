@@ -165,6 +165,28 @@ matrix<T> matrix<T>::row_swap(int m_row, int n_row)&
 }
 
 template<typename T>
+matrix<T> matrix<T>::tranpose()&
+{
+    matrix<T> AT = matrix(this->cols, this->rows);
+    for (int j = 0; j < this->cols; ++j)
+    {
+        for (int i = 0; i < this->rows; ++i)
+            AT(j, i) = (*this)(i, j);
+    }
+    return AT;
+}
+
+template<typename T>
+matrix<T> matrix<T>::minor(int n)
+{
+    matrix<T> minor = matrix<T>(n, n);
+    for (int j = 0; j < n; ++j)
+        for (int i = 0; i < n; ++i)
+            minor(i, j) = (*this)(i, j);
+    return minor;
+}
+
+template<typename T>
 void matrix<T>::swap(matrix<T>& M)
 {
     std::swap(this->rows, M.rows);

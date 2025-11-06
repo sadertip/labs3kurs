@@ -8,8 +8,8 @@ template<typename T>
 matrix<T> QR_decomposition(matrix<T>& A, matrix<T>& b)
 {
 	matrix<T> Q = eye<T>(A.rows, 1);
-	matrix<T> R = matrix(A);
-	matrix<T> b1 = matrix(b);
+	matrix<T> R = matrix<T>(A);
+	matrix<T> b1 = matrix<T>(b);
 
 	for (int step = 0; step < A.cols - 1; ++step)
 	{
@@ -18,8 +18,8 @@ matrix<T> QR_decomposition(matrix<T>& A, matrix<T>& b)
 
 	auto x = gauss_back(R, b1);
 	std::cout << "Matrix Q: \n" << Q << '\n' << "Matrix R: \n" << R << std::endl;
-	//auto A1 = Q * R;
-	//std::cout << A1 << std::endl;
+	auto A1 = Q * R;
+	std::cout << A1 << std::endl;
 	return x;
 }
 
