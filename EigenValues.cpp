@@ -312,36 +312,36 @@ matrix<T> b_vector(matrix<T>& A)
 	return b;
 }
 
-int main()
-{
-	using T = double;
-	T epsilon = 1e-8;
-	matrix<T> A = matrix<T>(4, 4, { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 });
-	matrix<T> B = matrix<T>(4, 4, {1.50,0,-0.43,-0.75,0,3,0.87,-0.5,-0.43,0.87,2.9,-0.22,-0.75,-0.5,-0.22,2.6 });
-	std::cout << B << std::endl;
-	//auto Am = A.minor(2);
-	//std::cout << Am << std::endl;
-	//Hessenberg_form(B);
-	//std::cout << B << std::endl;
-	//auto QR = QR_matrices(B);
-	//auto Q = QR.first;
-	//auto R = QR.second;
-	//std::cout << "Q: \n" << Q << '\n' << "R: \n" << R << std::endl;
-	//auto B1 = Q.tranpose() * R;
-	//std::cout << "B1: \n" << B1 << std::endl;
-	auto C = matrix<T>(2, 2, { 1, 6, 1, 2 });
-	QR_eigenvalues(B, epsilon);
-	QR_eigenvalues(B, epsilon, false);
-	QR_eigenvalues(B, epsilon, true, false);
-	auto eigenvalues = QR_eigenvalues(B,epsilon, false, false);
-	std::cout << eigenvalues << std::endl;
-	//auto eigenvectors = reverse_iter_eigenvectors(B, eigenvalues, epsilon);
-	//std::cout << eigenvectors << std::endl;
-	//auto eigensystem = Rayleigh(C, epsilon);
-	//std::cout << eigensystem.first << std::endl;
-	//std::cout << eigensystem.second << std::endl;
-	//auto eigenvalues1 = QR_eigenvalues(C, epsilon);
-	//std::cout << eigenvalues1 << std::endl;
-	//auto eigenvectors1 = reverse_iter_eigenvectors(C, eigenvalues1, epsilon);
-	//std::cout << eigenvectors1 << std::endl;
-}
+//int main()
+//{
+//	using T = double;
+//	T epsilon = 1e-8;
+//	matrix<T> A = matrix<T>(4, 4, { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 });
+//	matrix<T> B = matrix<T>(4, 4, {1.50,0,-0.43,-0.75,0,3,0.87,-0.5,-0.43,0.87,2.9,-0.22,-0.75,-0.5,-0.22,2.6 });
+//	std::cout << B << std::endl;
+//	//auto Am = A.minor(2);
+//	//std::cout << Am << std::endl;
+//	//Hessenberg_form(B);
+//	//std::cout << B << std::endl;
+//	//auto QR = QR_matrices(B);
+//	//auto Q = QR.first;
+//	//auto R = QR.second;
+//	//std::cout << "Q: \n" << Q << '\n' << "R: \n" << R << std::endl;
+//	//auto B1 = Q.tranpose() * R;
+//	//std::cout << "B1: \n" << B1 << std::endl;
+//	auto C = matrix<T>(2, 2, { 1, 6, 1, 2 });
+//	QR_eigenvalues(B, epsilon);
+//	QR_eigenvalues(B, epsilon, false);
+//	QR_eigenvalues(B, epsilon, true, false);
+//	auto eigenvalues = QR_eigenvalues(B,epsilon, false, false);
+//	std::cout << eigenvalues << std::endl;
+//	//auto eigenvectors = reverse_iter_eigenvectors(B, eigenvalues, epsilon);
+//	//std::cout << eigenvectors << std::endl;
+//	//auto eigensystem = Rayleigh(C, epsilon);
+//	//std::cout << eigensystem.first << std::endl;
+//	//std::cout << eigensystem.second << std::endl;
+//	//auto eigenvalues1 = QR_eigenvalues(C, epsilon);
+//	//std::cout << eigenvalues1 << std::endl;
+//	//auto eigenvectors1 = reverse_iter_eigenvectors(C, eigenvalues1, epsilon);
+//	//std::cout << eigenvectors1 << std::endl;
+//}
