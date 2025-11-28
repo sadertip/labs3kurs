@@ -256,9 +256,9 @@ void matrix<T>::readFromFile(std::ifstream& file)
 }
 
 template<typename T>
-void matrix<T>::writeToFile(const std::string& filename)
+void matrix<T>::writeToFile(const std::string& filename, const int mode)
 {
-    std::ofstream file(filename);
+    std::ofstream file(filename, mode);
     file << rows << ' ' << cols << "\n";
 
     for (size_t i = 0; i < rows; ++i) {
@@ -396,3 +396,12 @@ matrix<T> matrix<T>::get_U() const {
 //    std::cout << temp << '\n' << C << std::endl;
 //    return 0;
 //}
+
+
+inline int powi(int x, int y)
+{
+    int ans = 1;
+    for (int i = 0; i < y; ++i)
+        ans *= x;
+    return ans;
+}

@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 
-
 template<typename T>
 class matrix
 {
@@ -53,7 +52,7 @@ public:
 
 	void readFromFile(std::ifstream& file);
 
-	void writeToFile(const std::string& filename);
+	void writeToFile(const std::string& filename, const int = std::ios_base::out);
 
 	matrix(const std::string& filename);
 
@@ -70,3 +69,6 @@ std::ostream& operator<<(std::ostream& out, const matrix<T>& M);
 
 template<typename T>
 matrix<T> eye(size_t m, T value);
+
+
+inline int powi(int x, int y);

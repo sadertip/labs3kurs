@@ -1,34 +1,110 @@
+
 //#include "Gaus.cpp"
 //#include "Matrices_template.cpp"
-#include "simple_iteration_method.cpp"
-#include "QR decomposition.cpp"
-#include "other.cpp"
+//#include "simple_iteration_method.cpp"
+//#include "QR decomposition.cpp"
+//#include "other.cpp"
+#include "Interpolation.cpp"
 #include "Nets.cpp"
+#include "Matrices_template.cpp"
 
-int main() {
-    double a = -1.0;
-    double b = 1.0;
-    int n = 4; // 5 узлов (i = 0, 1, 2, 3, 4)
+#include <string>
+#include <iostream>
 
-    try {
-        // --- Равномерная сетка ---
-        matrix<double> uniform_grid = generate_uniform_grid_matrix<double>(a, b, n);
-        std::cout << "Normal grid\n";
-        // Предполагается, что оператор << выведет содержимое
-        std::cout << uniform_grid << "\n";
+int main()
+{
+    using T = double;
+    auto path1 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\polyvalues1.txt";
+    auto path2 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\splinevalues1.txt";
+   
+    std::string path01 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\polyvalues";
+    std::string path02 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\splinevalues";
+    //auto unigrid1 = generate_uniform_grid_matrix<T>(a, b, 4);
 
-        // --- Чебышёвская сетка ---
-        matrix<double> chebyshev_grid = generate_chebyshev_grid_matrix<double>(a, b, n);
-        std::cout << "Chebyshev grid\n";
-        std::cout << chebyshev_grid << "\n";
+    T a = -1;
+    T b = -a;
+    T(*func)(T) = func3;
+    for (int i = 1; i < 7; ++i)
+    {
+        std::string path1 = path01 + std::to_string(i) + ".txt";
+        std::string path2 = path02 + std::to_string(i) + ".txt";
+        auto unigrid = generate_uniform_grid_matrix<T>(a, b, 4 * powi(2, i - 1));
+        auto chegrid = generate_chebyshev_grid_matrix<T>(a, b, 4 * powi(2, i - 1));
 
+        Lagrange_polynom<T> polynom = Lagrange_polynom<T>(unigrid, func);
+        Spline<T> spline = Spline<T>(chegrid, func);
+        std::cout << chegrid << std::endl;
+        auto testgrid = generate_uniform_grid_matrix<T>(a, b, 100);
+        auto test_poly = generate_values<T>(testgrid, polynom);
+        auto test_spline = generate_values<T>(testgrid, spline);
+        std::cout << test_spline << std::endl;
+
+        testgrid.writeToFile(path1);
+        test_poly.writeToFile(path1, std::ios_base::app);
+        polynom.points.writeToFile(path1, std::ios_base::app);
+        polynom.divided_differences.writeToFile(path1, std::ios_base::app);
+
+        testgrid.writeToFile(path2);
+        test_spline.writeToFile(path2, std::ios_base::app);
+        spline.points.writeToFile(path2, std::ios_base::app);
+        spline.a_Coeffs.writeToFile(path2, std::ios_base::app);
+        spline.b_Coeffs.writeToFile(path2, std::ios_base::app);
+        spline.c_Coeffs.writeToFile(path2, std::ios_base::app);
+        spline.d_Coeffs.writeToFile(path2, std::ios_base::app);
     }
-    catch (const std::exception& e) {
-        std::cerr << "Ошибка: " << e.what() << "\n";
-    }
+    //auto unigrid2 = generate_uniform_grid_matrix<T>(-1, 1, 8);
+    //auto unigrid3 = generate_uniform_grid_matrix<T>(-1, 1, 16);
+    //auto unigrid4 = generate_uniform_grid_matrix<T>(-1, 1, 32);
+    //auto unigrid5 = generate_uniform_grid_matrix<T>(-1, 1, 64);
+    //auto unigrid6 = generate_uniform_grid_matrix<T>(-1, 1, 128);
 
-    return 0;
+    //std::cout << grid1 << std::endl;
+    //auto values1 = matrix<T>(1, 5, { 0, -2, -2, 0, 4 });
+    //Lagrange_polynom<T> polynom1 = Lagrange_polynom<T>(unigrid1, func4);
+    //Spline<T> spline1 = Spline<T>(unigrid1, func4);
+
+    //auto testgrid1 = generate_uniform_grid_matrix<T>(a, b, 200);
+    //auto test_poly1 = generate_values<T>(testgrid1, polynom1);
+    //auto test_spline1 = generate_values<T>(testgrid1, spline1);
+    ////std::cout << test1 << std::endl;
+    //testgrid1.writeToFile(path1);
+    //test_poly1.writeToFile(path1, std::ios_base::app);
+    //polynom1.points.writeToFile(path1, std::ios_base::app);
+    //polynom1.divided_differences.writeToFile(path1, std::ios_base::app);
+
+    //testgrid1.writeToFile(path2);
+    //test_spline1.writeToFile(path2, std::ios_base::app);
+    //spline1.points.writeToFile(path2, std::ios_base::app);
+    //spline1.a_Coeffs.writeToFile(path2, std::ios_base::app);
+    //spline1.b_Coeffs.writeToFile(path2, std::ios_base::app);
+    //spline1.c_Coeffs.writeToFile(path2, std::ios_base::app);
+    //spline1.d_Coeffs.writeToFile(path2, std::ios_base::app);
 }
+
+//int main() {
+//    double a = -1.0;
+//    double b = 1.0;
+//    int n = 4; // 5 узлов (i = 0, 1, 2, 3, 4)
+//
+//    try {
+//        // --- Равномерная сетка ---
+//        matrix<double> uniform_grid = generate_uniform_grid_matrix<double>(a, b, n);
+//        std::cout << "Normal grid\n";
+//        // Предполагается, что оператор << выведет содержимое
+//        std::cout << uniform_grid << "\n";
+//
+//        // --- Чебышёвская сетка ---
+//        matrix<double> chebyshev_grid = generate_chebyshev_grid_matrix<double>(a, b, n);
+//        std::cout << "Chebyshev grid\n";
+//        std::cout << chebyshev_grid << "\n";
+//
+//    }
+//    catch (const std::exception& e) {
+//        std::cerr << "Ошибка: " << e.what() << "\n";
+//    }
+//
+//    return 0;
+//}
 //
 //int main()
 //{
