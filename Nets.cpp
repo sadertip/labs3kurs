@@ -48,7 +48,7 @@ matrix<T> generate_chebyshev_grid_matrix(T a, T b, int n) {
         T x_i = static_cast<T>(center + radius * std::cos(theta));
 
         // Запись в матрицу
-        grid[i] = x_i;
+        grid[n - i] = x_i;
     }
     return grid;
 }

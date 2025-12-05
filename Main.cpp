@@ -21,20 +21,29 @@ int main()
     std::string path02 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\splinevalues";
     //auto unigrid1 = generate_uniform_grid_matrix<T>(a, b, 4);
 
-    T a = -1;
-    T b = -a;
-    T(*func)(T) = func3;
+    T a = -0;
+    T b = 1;
+    T h = 0.25;
+    T q = 0.5;
+    T(*func)(T) = Sin;
     for (int i = 1; i < 7; ++i)
     {
         std::string path1 = path01 + std::to_string(i) + ".txt";
         std::string path2 = path02 + std::to_string(i) + ".txt";
-        auto unigrid = generate_uniform_grid_matrix<T>(a, b, 4 * powi(2, i - 1));
-        auto chegrid = generate_chebyshev_grid_matrix<T>(a, b, 4 * powi(2, i - 1));
+        //int n = 4 * powi(2, i - 1);
+        int n = ceil((b - a) / h);
+        n *= powi(ceil(1 / q), (i-1));
+        auto unigrid = generate_uniform_grid_matrix<T>(a, b, n);
+        auto chegrid = generate_chebyshev_grid_matrix<T>(a, b, n);
+        
+        auto grid = chegrid;
+        T a1 = grid[0];
+        T b1 = grid[n];
 
-        Lagrange_polynom<T> polynom = Lagrange_polynom<T>(unigrid, func);
-        Spline<T> spline = Spline<T>(chegrid, func);
+        Lagrange_polynom<T> polynom = Lagrange_polynom<T>(grid, func);
+        Spline<T> spline = Spline<T>(grid, func);
         std::cout << chegrid << std::endl;
-        auto testgrid = generate_uniform_grid_matrix<T>(a, b, 100);
+        auto testgrid = generate_uniform_grid_matrix<T>(a1, b1, 100);
         auto test_poly = generate_values<T>(testgrid, polynom);
         auto test_spline = generate_values<T>(testgrid, spline);
         std::cout << test_spline << std::endl;

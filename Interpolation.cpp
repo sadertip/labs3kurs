@@ -65,7 +65,7 @@ template<typename T>
 T Lagrange_polynom<T>::operator()(T x)&
 {
     T ans = 0;
-    for (int i = 0; i < degree - 1; ++i)
+    for (int i = 0; i < degree; ++i)
     {
         T prod = this->divided_differences[i];
         for (int k = 0; k < i; ++k)
@@ -284,4 +284,10 @@ template<typename T>
 T Runge(T x)
 {
     return 1 / (1 + 25 * SQR(x));
+}
+
+template<typename T>
+T Sin(T x)
+{
+    return std::sin(M_PI * x);
 }
