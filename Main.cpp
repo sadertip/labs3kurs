@@ -7,60 +7,287 @@
 #include "Interpolation.cpp"
 #include "Nets.cpp"
 #include "Matrices_template.cpp"
-
+#include "Nelinear.cpp"
 #include <string>
 #include <iostream>
+template<typename T>
+T func(T x)
+{
+    return std::sqrt(x+1)-1;
+}
+template<typename T>
+T dfunc(T x)
+{
+    return 1.0/(2.0*std::sqrt(x + 1));
+}
+
+template<typename T>
+matrix<T> system_f_example2(const matrix<T>& x) {
+    T x1 = x(0, 0);
+    T x2 = x(1, 0);
+
+    T f1 = x1*x1-x2*x2-15.0;
+    T f2 = x1 * x2 + 4.0;
+
+    matrix<T> result(2, 1);
+    result(0, 0) = f1;
+    result(1, 0) = f2;
+    return result;
+}
+template <typename T>
+matrix<T> system_f_example3(const matrix<T>& x) {
+    T x1 = x(0, 0);
+    T x2 = x(1, 0);
+
+    T f1 = x1 * x1 + x2 * x2 + x1 + x2 - 8.0;
+    T f2 = x1 * x1 + x2 * x2 + x1 * x2 - 7.0;
+
+    matrix<T> result(2, 1);
+    result(0, 0) = f1;
+    result(1, 0) = f2;
+
+    return result;
+}
+template <typename T>
+matrix<T> system_f_example1(const matrix<T>& x) {
+    T x1 = x(0, 0);
+    T x2 = x(1, 0);
+
+    T f1 = 4.0 * (x1 + x2) * (x1 + x2)
+        + 0.5 * (x1 - x2) * (x1 - x2)
+        - 10.0;
+
+    T f2 = x1 * x1
+        + 3.0 * (x2 - 3.0) * (x2 - 3.0)
+        - 9.0;
+
+    matrix<T> result(2, 1);
+    result(0, 0) = f1;
+    result(1, 0) = f2;
+
+    return result;
+}
+template <typename T>
+matrix<T> system_f_example(const matrix<T>& x) {
+    T x1 = x(0, 0);
+    T x2 = x(1, 0);
+
+    T f1 = (x1 * x1 + 2.0 * x2 * x2) * (x1 * x1 + 2.0 * x2 * x2)
+        - 7.0 * (x1 * x1 - 2.0 * x2 * x2);
+
+    T f2 = 3.0 * x1 * x1
+        + 4.0 * x2 * x2
+        - 14.0;
+
+    matrix<T> result(2, 1);
+    result(0, 0) = f1;
+    result(1, 0) = f2;
+
+    return result;
+}
+
+
+
+//template<typename T>
+//bool is_defined(T x) {
+//    return x >= -1.0;
+//}
+//T func(T x)
+//{
+//    return (x - 0.1)*(x - 0.22)*(x - 0.55)*(x - 0.7)*(x - 0.75);
+//}
+//template<typename T>
+//T dfunc(T x)
+//{
+//    return (-0.75 + x)* (-0.7 + x) *(-0.55 + x) *(-0.22 + x) + (-0.75 +
+//        x) *(-0.7 + x) *(-0.55 + x)* (-0.1 + x) + (-0.75 + x) *(-0.7 +
+//            x) *(-0.22 + x) *(-0.1 + x) + (-0.75 + x)* (-0.55 + x) *(-0.22 +
+//                x) *(-0.1 + x) + (-0.7 + x)* (-0.55 + x) *(-0.22 + x)* (-0.1 +
+//                    x);
+//}
 
 int main()
 {
-    using T = double;
-    auto path1 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\polyvalues1.txt";
-    auto path2 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\splinevalues1.txt";
-   
-    std::string path01 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\polyvalues";
-    std::string path02 = "D:\\Storage\\Вуз\\Задания\\Методы вычислений\\labs3kurs\\Interpolation_results\\splinevalues";
+    using T = long double;
     //auto unigrid1 = generate_uniform_grid_matrix<T>(a, b, 4);
+    T a = -1.0;
+    T b = 10.0;
+    T step = 0.01;
 
-    T a = -0;
-    T b = 1;
-    T h = 0.25;
-    T q = 0.5;
-    T(*func)(T) = Sin;
-    for (int i = 1; i < 7; ++i)
-    {
-        std::string path1 = path01 + std::to_string(i) + ".txt";
-        std::string path2 = path02 + std::to_string(i) + ".txt";
-        //int n = 4 * powi(2, i - 1);
-        int n = ceil((b - a) / h);
-        n *= powi(ceil(1 / q), (i-1));
-        auto unigrid = generate_uniform_grid_matrix<T>(a, b, n);
-        auto chegrid = generate_chebyshev_grid_matrix<T>(a, b, n);
-        
-        auto grid = chegrid;
-        T a1 = grid[0];
-        T b1 = grid[n];
+    std::cout << "--- Localization of roots for f(x) = x^3 - x - 1 ---" << std::endl;
+    std::cout << "Segment: [" << a << ", " << b << "], Step: " << step << std::endl;
 
-        Lagrange_polynom<T> polynom = Lagrange_polynom<T>(grid, func);
-        Spline<T> spline = Spline<T>(grid, func);
-        std::cout << chegrid << std::endl;
-        auto testgrid = generate_uniform_grid_matrix<T>(a1, b1, 100);
-        auto test_poly = generate_values<T>(testgrid, polynom);
-        auto test_spline = generate_values<T>(testgrid, spline);
-        std::cout << test_spline << std::endl;
+    
+    matrix<T> intervals = localize_roots(a, b, step, func);
 
-        testgrid.writeToFile(path1);
-        test_poly.writeToFile(path1, std::ios_base::app);
-        polynom.points.writeToFile(path1, std::ios_base::app);
-        polynom.divided_differences.writeToFile(path1, std::ios_base::app);
-
-        testgrid.writeToFile(path2);
-        test_spline.writeToFile(path2, std::ios_base::app);
-        spline.points.writeToFile(path2, std::ios_base::app);
-        spline.a_Coeffs.writeToFile(path2, std::ios_base::app);
-        spline.b_Coeffs.writeToFile(path2, std::ios_base::app);
-        spline.c_Coeffs.writeToFile(path2, std::ios_base::app);
-        spline.d_Coeffs.writeToFile(path2, std::ios_base::app);
+    if (intervals.rows* intervals.cols == 0) {
+        std::cout << "\nRoots were not found on the given segment with the given step." << std::endl;
+        return 0;
     }
+
+    std::cout << "\nLocalization intervals found:" << std::endl;
+
+    for (size_t i = 0; i < intervals.cols; i += 2) {
+        T x_left = intervals[i];
+        T x_right = intervals[i + 1];
+
+        if (x_left == x_right) {
+            std::cout << "* The exact root has been found: x = " << x_left << std::endl;
+        }
+        else {
+            std::cout << "* [" << x_left << ", " << x_right << "]" << std::endl;
+        }
+    }
+
+    // Пример вывода для f(x) = x^3 - x - 1 на [1.0, 2.0] с шагом 0.1:
+    // Найденные интервалы локализации:
+    // * [1.3, 1.4] (где находится корень 1.3247   
+    T tolerance = 0.000001;
+    for (size_t i = 0; i < intervals.cols; i += 2) {
+        T x_left = intervals[i];
+        T x_right = intervals[i + 1];
+        
+        find_roots(x_left, x_right, func, dfunc, tolerance);
+    }
+
+    int newton_iters = 0;
+    T nach = 8;
+    T aa = -1;
+    T bb = 100;
+    T root_newton = newton_method(aa,bb,nach, func, dfunc, tolerance, 10000, newton_iters);
+    std::cout << "  Root: " << std::fixed << root_newton << "\n";
+
+
+    matrix<T> x0(2, 1);
+    x0(0, 0) = 0.5; // x1 = 1.0
+    x0(1, 0) = 0.0; // x2 = 1.0
+
+    int iterations = 0;
+    T a1 = -10;
+    T b1 = 10;
+    T a2 = -10;
+    T b2 = 10;
+    matrix<T> result = newton_system_2x2_matrix(a1,b1,a2,b2,
+        x0,
+        system_f_example,
+        tolerance,
+        100,
+        iterations
+    );
+
+    std::cout << "--- The results of the Niuton method of the system 2x2 ---" << std::endl;
+    if (!std::isnan(result(0, 0))) {
+        std::cout << "Solution: x1 = " << result(0, 0) << ", x2 = " << result(1, 0) << std::endl;
+        std::cout << "Iterations: " << iterations << std::endl;
+    }
+    else {
+        std::cout << "No solution found (error or non-convergence)." << std::endl;
+    }
+
+
+
+    const double L1 = 10.0; 
+    const double L2 = 10.0; 
+    const int N = 200;     
+
+    // Шаги сетки
+    const double h1 = 2.0 * L1 / N;
+    const double h2 = 2.0 * L2 / N;
+
+    // Открытие файла для записи
+    std::ofstream outfile("convergence_map.txt");
+    if (!outfile.is_open()) {
+        std::cerr << "Error: Could not open output file." << std::endl;
+        return 1;
+    }
+
+    std::cout << "Generating convergence map data (" << (N + 1) << "x" << (N + 1) << " grid)..." << std::endl;
+
+    matrix<T> xi0(2, 1);
+
+    
+    for (int i = 0; i <= N; ++i) {
+        double x1_coord = -L1 + i * h1; 
+        xi0(0, 0) = x1_coord;
+
+        for (int j = 0; j <= N; ++j) {
+            double x2_coord = -L2 + j * h2; 
+            xi0(1, 0) = x2_coord;
+
+            
+            iterations = 0;
+            matrix<T> resultt = newton_system_2x2_matrix(a1, b1, a2, b2,
+                xi0,
+                system_f_example,
+                tolerance,
+                100, iterations
+            );
+
+            
+            outfile << x1_coord << " " << x2_coord << " " << iterations << "\n";
+        }
+    }
+
+    outfile.close();
+    return 0;
+}    
+       
+        
+//int main()
+//{
+//    using T = long double;
+//    auto path1 = "C:\\Users\\Alex\\Desktop\\labs3kurs\\Interpolation_results\\polyvalues1.txt";
+//    auto path2 = "C:\\Users\\Alex\\Desktop\\labs3kurs\\Interpolation_results\\splinevalues1.txt";
+//   
+//    std::string path01 = "C:\\Users\\Alex\\Desktop\\labs3kurs\\Interpolation_results\\polyvalues";
+//    std::string path02 = "C:\\Users\\Alex\\Desktop\\labs3kurs\\Interpolation_results\\splinevalues";
+//    //auto unigrid1 = generate_uniform_grid_matrix<T>(a, b, 4);
+//
+//    T a = -1;
+//    T b = 1;
+//    T h = 0.25;
+//    T q = 0.5;
+//    T(*func)(T) = Runge;
+//    for (int i = 1; i < 7; ++i)
+//    {
+//        std::string path1 = path01 + std::to_string(i) + ".txt";
+//        std::string path2 = path02 + std::to_string(i) + ".txt";
+//        //int n = 4 * powi(2, i - 1);
+//        int n = ceil((b - a) /( h*pow(q,i-1)));
+//        std::cout << n << std::endl;
+//       /* n *= powi(ceil(1 / q), (i-1));*/
+//        auto unigrid = generate_uniform_grid_matrix<T>(a, b, n);
+//        auto chegrid = generate_chebyshev_grid_matrix<T>(a, b, n);
+//        
+//        auto grid = chegrid;
+//        T a1 = grid[0];
+//        T b1 = grid[n];
+//
+//        Lagrange_polynom<T> polynom = Lagrange_polynom<T>(grid, func);
+//        Spline<T> spline = Spline<T>(grid, func);
+//       
+//        /*auto testgrid = grid;
+//        auto test_poly = generate_values<T>(testgrid, polynom);
+//        auto test_spline = generate_values<T>(testgrid, spline);*/
+//        auto testgrid = generate_uniform_grid_matrix<T>(a, b, 50);
+//        std::cout << testgrid << std::endl;
+//        auto test_poly = generate_values<T>(testgrid, polynom);
+//        auto test_spline = generate_values<T>(testgrid, spline);
+//        std::cout << test_poly << std::endl;
+//
+//        testgrid.writeToFile(path1);
+//        test_poly.writeToFile(path1, std::ios_base::app);
+//        polynom.points.writeToFile(path1, std::ios_base::app);
+//        //polynom.divided_differences.writeToFile(path1, std::ios_base::app);
+//
+//        testgrid.writeToFile(path2);
+//        test_spline.writeToFile(path2, std::ios_base::app);
+//        spline.points.writeToFile(path2, std::ios_base::app);
+//        spline.a_Coeffs.writeToFile(path2, std::ios_base::app);
+//        spline.b_Coeffs.writeToFile(path2, std::ios_base::app);
+//        spline.c_Coeffs.writeToFile(path2, std::ios_base::app);
+//        spline.d_Coeffs.writeToFile(path2, std::ios_base::app);
+//    }
     //auto unigrid2 = generate_uniform_grid_matrix<T>(-1, 1, 8);
     //auto unigrid3 = generate_uniform_grid_matrix<T>(-1, 1, 16);
     //auto unigrid4 = generate_uniform_grid_matrix<T>(-1, 1, 32);
@@ -87,8 +314,7 @@ int main()
     //spline1.a_Coeffs.writeToFile(path2, std::ios_base::app);
     //spline1.b_Coeffs.writeToFile(path2, std::ios_base::app);
     //spline1.c_Coeffs.writeToFile(path2, std::ios_base::app);
-    //spline1.d_Coeffs.writeToFile(path2, std::ios_base::app);
-}
+    //spline1.d_Coeffs.writeToFile(path2, std::ios_base::app);}
 
 //int main() {
 //    double a = -1.0;
@@ -172,7 +398,7 @@ int main()
 //		matrix<T> x0(4, 1, { 1.0, 1.0,1.0,1.0 });
 //
 //		std::cout << "Matrix A:\n" << A << "\n";
-//		std::cout << "Vector b:\n" << b << "\n";
+//		std::cout << "matrix<T> b:\n" << b << "\n";
 //
 //
 //

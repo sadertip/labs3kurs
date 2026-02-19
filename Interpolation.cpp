@@ -9,80 +9,213 @@
 #define CUBE(x) (x*x*x)
 #define EPSILON 10e-6
 
+//template<typename T>
+//Lagrange_polynom<T>::Lagrange_polynom(const matrix<T>& grid, T(*f)(T))
+//    {
+//        N = grid.rows * grid.cols;
+//        if (N == 0) {
+//            throw std::invalid_argument("Grid cannot be empty.");
+//        }
+//
+//        // 1. Инициализация и сохранение узлов
+//        this->points = matrix<T>(grid);
+//        this->coefficients = matrix<T>(1, N);
+//
+//        // 2. Генерация значений y_i = f(x_i) и использование их как начальные разности
+//        // temp_diffs будет хранить текущий столбец разделенных разностей.
+//        // Используем matrix<T> вместо std::vector, как и требовалось.
+//        matrix<T> temp_diffs(1, N);
+//
+//        for (size_t i = 0; i < N; ++i) {
+//            temp_diffs[i] = f(points[i]);
+//        }
+//
+//        // 3. Вычисление и сохранение разделенных разностей (O(N^2))
+//
+//        // Первый коэффициент - это f[x0]
+//        coefficients[0] = temp_diffs[0];
+//
+//        for (size_t k = 1; k < N; ++k)
+//        {
+//            // Вычисляем k-ую разность: f[x_i, ..., x_{i+k}]
+//            for (size_t i = 0; i < N - k; ++i)
+//            {
+//                // Формула: (f[x_{i+1},...] - f[x_i,...]) / (x_{i+k} - x_i)
+//                T numerator = temp_diffs[i + 1] - temp_diffs[i];
+//                T denominator = points[i + k] - points[i]; // points[i] обращается к x_i
+//
+//                if (std::abs(denominator) < 1e-9) {
+//                    throw std::runtime_error("Узлы интерполяции не должны совпадать.");
+//                }
+//
+//                // Перезаписываем (i)-й элемент в текущем столбце разностей
+//                temp_diffs[i] = numerator / denominator;
+//            }
+//
+//            // Сохраняем первый элемент k-ой разности как коэффициент
+//            coefficients[k] = temp_diffs[0];
+//        }
+//    }
+//template<typename T>
+// T Lagrange_polynom<T>::operator()(T x_eval) const
+//    {
+//        if (N == 0) return 0;
+//
+//        T P_x = coefficients[N - 1]; // Начинаем с последнего коэффициента c_{N-1}
+//
+//        // Обратный цикл для схемы Горнера
+//        // P(x) = c_0 + (x-x_0)(c_1 + (x-x_1)(c_2 + ...))
+//        for (int i = N - 2; i >= 0; --i)
+//        {
+//            // P_x = c_i + (x - x_i) * P_x (новая P_x)
+//            P_x = P_x * (x_eval - points[i]) + coefficients[i];
+//        }
+//
+//        return P_x;
+//    }
+
+//____________________________________Никитино__________________________________________
+//____________________________________Никитино__________________________________________
+//____________________________________Никитино__________________________________________
+//____________________________________Никитино__________________________________________
+//template<typename T>
+//Lagrange_polynom<T>::Lagrange_polynom(matrix<T>& grid, T(*f)(T))
+//{
+//    //degree = grid.cols;
+//    //points = matrix<T>(grid);
+//    //divided_differences(grid.rows, grid.cols);
+//
+//    auto prev_col = generate_values<T>(grid, f);
+//    (*this) = Lagrange_polynom(grid, prev_col);
+//    //auto cur_col = matrix<T>(grid.rows, grid.cols - 1);
+//   
+//    //divided_differences[0] = f(grid[0]);
+//    //for (int k = 1; k < degree; ++k)
+//    //{
+//    //    for (int i = 0; i < degree - k; ++i)
+//    //    {
+//    //        cur_col[i] = (prev_col[i + 1] - prev_col[i]) / (grid[i + k] - grid[i]);
+//    //    }
+//    //    divided_differences[k] = cur_col[0];
+//    //    prev_col.cols -= 1;
+//    //    prev_col = cur_col;
+//    //}
+//}
+//
+//template<typename T>
+//Lagrange_polynom<T>::Lagrange_polynom(matrix<T>& grid, matrix<T>& values)
+//{
+//    degree = grid.cols;
+//    points = matrix<T>(grid);
+//    divided_differences = matrix<T>(grid.rows, grid.cols);
+//
+//    auto prev_col = matrix<T>(values);
+//    auto cur_col = matrix<T>(grid.rows, grid.cols - 1);
+//    //std::cout << "cur_col:\n" << cur_col << std::endl;
+//
+//    divided_differences[0] = values[0];
+//    for (int k = 1; k < degree; ++k)
+//    {
+//        for (int i = 0; i < degree - k; ++i)
+//        {
+//            cur_col[i] = (prev_col[i + 1] - prev_col[i]) / (grid[i + k] - grid[i]);
+//        }
+//        //std::cout << k <<" cur_col:\n" << cur_col << std::endl;
+//
+//        divided_differences[k] = cur_col[0];
+//        //std::cout << k << " div_diff:\n" << divided_differences << std::endl;
+//        prev_col.cols -= 1;
+//        prev_col = cur_col;
+//        cur_col.cols -= 1;
+//    }
+//}
+//
+//template<typename T>
+//T Lagrange_polynom<T>::operator()(T x)&
+//{
+//    T ans = 0;
+//    for (int i = 0; i < degree; ++i)
+//    {
+//        T prod = this->divided_differences[i];
+//        for (int k = 0; k < i; ++k)
+//        {
+//            prod *= x - this->points[k];
+//        }
+//        ans += prod;
+//    }
+//    return ans;
+//}
+//
+//template<typename T>
+//Lagrange_polynom<T>::~Lagrange_polynom()
+//{
+//    this->points.~matrix();
+//    this->divided_differences.~matrix();
+//}
+//____________________________________Никитино__________________________________________
+//____________________________________Никитино__________________________________________
+//____________________________________Никитино__________________________________________
+//____________________________________Никитино__________________________________________
 template<typename T>
-Lagrange_polynom<T>::Lagrange_polynom(matrix<T>& grid, T(*f)(T))
-{
-    //degree = grid.cols;
-    //points = matrix<T>(grid);
-    //divided_differences(grid.rows, grid.cols);
-
-    auto prev_col = generate_values<T>(grid, f);
-    (*this) = Lagrange_polynom(grid, prev_col);
-    //auto cur_col = matrix<T>(grid.rows, grid.cols - 1);
-   
-    //divided_differences[0] = f(grid[0]);
-    //for (int k = 1; k < degree; ++k)
-    //{
-    //    for (int i = 0; i < degree - k; ++i)
-    //    {
-    //        cur_col[i] = (prev_col[i + 1] - prev_col[i]) / (grid[i + k] - grid[i]);
-    //    }
-    //    divided_differences[k] = cur_col[0];
-    //    prev_col.cols -= 1;
-    //    prev_col = cur_col;
-    //}
-}
-
-template<typename T>
-Lagrange_polynom<T>::Lagrange_polynom(matrix<T>& grid, matrix<T>& values)
-{
-    degree = grid.cols;
-    points = matrix<T>(grid);
-    divided_differences = matrix<T>(grid.rows, grid.cols);
-
-    auto prev_col = matrix<T>(values);
-    auto cur_col = matrix<T>(grid.rows, grid.cols - 1);
-    //std::cout << "cur_col:\n" << cur_col << std::endl;
-
-    divided_differences[0] = values[0];
-    for (int k = 1; k < degree; ++k)
+ Lagrange_polynom<T>::Lagrange_polynom(const matrix<T>& grid, T(*f)(T))
     {
-        for (int i = 0; i < degree - k; ++i)
-        {
-            cur_col[i] = (prev_col[i + 1] - prev_col[i]) / (grid[i + k] - grid[i]);
+        N = grid.rows * grid.cols;
+        if (N == 0) {
+            throw std::invalid_argument("Grid cannot be empty.");
         }
-        //std::cout << k <<" cur_col:\n" << cur_col << std::endl;
 
-        divided_differences[k] = cur_col[0];
-        //std::cout << k << " div_diff:\n" << divided_differences << std::endl;
-        prev_col.cols -= 1;
-        prev_col = cur_col;
-        cur_col.cols -= 1;
+        // 1. Инициализация и сохранение узлов
+        this->points = matrix<T>(grid);
+        this->values = matrix<T>(1, N);
+
+        // 2. Генерация и сохранение значений y_i = f(x_i)
+        for (size_t i = 0; i < N; ++i) {
+            this->values[i] = f(this->points[i]);
+        }
+        std::cout << "points" << std::endl;
+        std::cout << this->values << std::endl;
+        std::cout << "points" << std::endl;
+        // Примечание: В этой форме нет предварительного вычисления, 
+        // так что конструктор очень быстрый (O(N)).
     }
-}
 
-template<typename T>
-T Lagrange_polynom<T>::operator()(T x)&
-{
-    T ans = 0;
-    for (int i = 0; i < degree; ++i)
+    /**
+     * @brief Вычисляет значение полинома в точке x_eval по стандартной формуле Лагранжа (O(N^2)).
+     */
+ template<typename T>
+ T Lagrange_polynom<T>::operator()(T x_eval) const
     {
-        T prod = this->divided_differences[i];
-        for (int k = 0; k < i; ++k)
-        {
-            prod *= x - this->points[k];
-        }
-        ans += prod;
-    }
-    return ans;
-}
+        T P_x = 0; // Итоговое значение полинома P(x)
 
-template<typename T>
-Lagrange_polynom<T>::~Lagrange_polynom()
-{
-    this->points.~matrix();
-    this->divided_differences.~matrix();
-}
+        // Внешний цикл по узлам k от 0 до N-1: P(x) = sum_{k=0}^{N-1} y_k * L_k(x)
+        for (size_t k = 0; k < N; ++k)
+        {
+            T Lk_x = 1; // Базисный полином Лагранжа L_k(x)
+
+            // Внутренний цикл для вычисления базисного полинома L_k(x)
+            // L_k(x) = prod_{j=0, j!=k}^{N-1} (x - x_j) / (x_k - x_j)
+            for (size_t j = 0; j < N; ++j)
+            {
+                if (k != j)
+                {
+                    T numerator = x_eval - points[j];
+                    T denominator = points[k] - points[j];
+
+                    if (std::abs(denominator) < 1e-9) {
+                        throw std::runtime_error("Узлы интерполяции не должны совпадать.");
+                    }
+                    auto vor= (numerator / denominator);
+                    Lk_x *= (numerator / denominator);
+                }
+            }
+
+            // Добавляем вклад k-го узла: y_k * L_k(x)
+            auto v= values[k];
+            P_x += values[k] * Lk_x;
+        }
+
+        return P_x;
+    }
 
 template<typename T>
 Spline<T>::Spline(matrix<T>& grid, T(*f)(T))
